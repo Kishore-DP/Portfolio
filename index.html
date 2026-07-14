@@ -1698,6 +1698,14 @@
     // readable `counters/pageViews` doc and shown in the "View Count" section of Let's Connect.
     // Counted once per browser (a localStorage guard) so one person reloading doesn't inflate it;
     // every load still reads and displays the current total. ----
+    // Detect a "Claude" session — the automated/preview browser Claude uses to open or preview the
+    // site (served from localhost, or flagged via navigator.webdriver). These are logged in the
+    // activity database under the name "Claude" and never inflate the public View Count. Real
+    // visitors always arrive over the kishore-dp.github.io domain.
+    function isClaudeSession(){
+      const h=location.hostname;
+      return navigator.webdriver===true || h==='localhost' || h==='127.0.0.1' || h==='[::1]' || h==='0.0.0.0' || h==='';
+    }
     let latestViewCount=null;
     function renderViewCount(){
       if(latestViewCount==null) return;
@@ -1706,8 +1714,8 @@
     async function initViewCount(){
       const ref=doc(db,'counters','pageViews');
       try{
-        if(localStorage.getItem('kdp_viewcounted') || navigator.webdriver){
-          const snap=await getDoc(ref);   // already counted, or an automated browser — read & show, don't inflate
+        if(localStorage.getItem('kdp_viewcounted') || isClaudeSession()){
+          const snap=await getDoc(ref);   // already counted, or a Claude/preview session — read & show, don't inflate
           latestViewCount = snap.exists() ? (snap.data().count||0) : 0;
         } else {
           latestViewCount = await runTransaction(db, async tx=>{
@@ -1729,10 +1737,12 @@
     // "(*) "), reusing the same identity so no number is skipped. ----
     let visitLogged=false, feedbackLogged=false;
     async function logVisitSession(){
-      if(visitLogged || feedbackLogged || navigator.webdriver) return;
+      if(visitLogged || feedbackLogged) return;
       visitLogged=true;
       try{
-        const identity=await getIdentity();   // hands out UnknownUserN in arrival order for a new browser
+        // Automated / preview browsers (Claude opening or previewing the site) are logged under the
+        // fixed name "Claude"; real visitors get their sequential UnknownUserN (or a typed name).
+        const identity = isClaudeSession() ? 'Claude' : await getIdentity();
         await setDoc(doc(db,'Portfolio Website Activity', newRecordId(identity)), {
           name: identity, previousNames: previousNamesSoFar(), visitorId: getVisitorId(),
           at: serverTimestamp(),
@@ -1743,9 +1753,12 @@
         });
       }catch(e){ console.error('visit log failed', e); visitLogged=false; }   // let a later trigger retry
     }
-    const _visitTimer=setTimeout(logVisitSession, 6000);
-    ['pointerdown','keydown','touchstart'].forEach(ev=>
-      addEventListener(ev, ()=>{ clearTimeout(_visitTimer); logVisitSession(); }, {once:true}));
+    if(isClaudeSession()){ logVisitSession(); }   // Claude's open/preview is logged right away
+    else {
+      const _visitTimer=setTimeout(logVisitSession, 6000);   // real visitor: confirm after a few seconds…
+      ['pointerdown','keydown','touchstart'].forEach(ev=>                 // …or on first real interaction
+        addEventListener(ev, ()=>{ clearTimeout(_visitTimer); logVisitSession(); }, {once:true}));
+    }
 
     async function writeFeedback(feedback){
       if(feedbackLogged || navigator.webdriver) return;
