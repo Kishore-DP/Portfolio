@@ -308,6 +308,12 @@
     .panel .panel-scroll .contact-row .ci-at { font-family:var(--font-body); font-weight:700; font-size:1.3rem; }
     .panel .panel-scroll .contact-row b { display:block; color:#fff; font-weight:700; font-size:.96rem; margin-bottom:2px; letter-spacing:.01em; }
     .panel .panel-scroll .contact-row small { color:#9a9d99; font-size:.85rem; }
+    /* View Count stat (Let's Connect) */
+    .panel .panel-scroll .viewcount { display:flex; align-items:baseline; gap:13px; margin:6px 0 22px; padding:16px 20px; border-radius:14px;
+      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09); }
+    .panel .panel-scroll .viewcount-num { font-family:var(--font-display); font-weight:800; font-size:2.1rem; line-height:1;
+      color:var(--accent,#7bc96f); letter-spacing:.01em; }
+    .panel .panel-scroll .viewcount-cap { color:#9a9d99; font-size:.9rem; }
     /* project cards */
     .proj { padding:19px 21px; margin:0 0 14px; border-radius:17px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.08);
       border-left:3px solid var(--accent,#7bc96f); transition:transform .25s var(--ease-out), border-color .2s ease, box-shadow .25s ease, background .2s ease; }
@@ -1628,7 +1634,7 @@
     import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
     import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getFirestore, doc, setDoc, runTransaction, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getFirestore, doc, setDoc, getDoc, runTransaction, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     // BVH-accelerated raycasting: every frame we raycast the whole market (ground height, wall
     // collision, camera collision) — a BVH per geometry turns those brute-force triangle tests
@@ -1674,12 +1680,10 @@
       if(!identity){ identity=await nextAnonId(); localStorage.setItem('kdp_identity', identity); }
       return identity;
     }
-    // Resolve (and cache) the visitor's identity as soon as the page loads, well before anyone could
-    // possibly leave — this only touches the small internal counter doc, it does NOT create a visit
-    // record. It exists purely so that by the time the visitor actually closes the tab, an anonymous
-    // browser's UnknownUserN is already sitting in localStorage instead of needing a fresh network
-    // round trip at the exact moment the page is being torn down (see beaconLeaveActivity below).
-    getIdentity();
+    // Identity is assigned lazily — the first time this session actually logs something (a confirmed
+    // visit or a feedback submission), NOT on page load. This keeps UnknownUserN strictly sequential
+    // and gap-free: a number is only handed out when a real record is about to be written, so bots
+    // and instant-bounces never "reserve" a number they never use.
     // append-only log — every doc gets a fresh, never-reused ID (identity prefix just keeps it
     // scannable in the console; uniqueness comes from the time+random suffix).
     function newRecordId(identity){
@@ -1690,52 +1694,62 @@
       return history.length ? history.join(', ') : 'None';
     }
 
-    // ---- unified activity log: exactly ONE doc per session, in a single "Portfolio Website Activity"
-    // collection — no more separate visits/feedback tables. It's written either when feedback is
-    // submitted or when the session ends (tab closed/refreshed/navigated away), whichever happens
-    // first; `sessionLogged` stops the other trigger from writing a second doc for the same session.
-    // A feedback session gets its display name prefixed with "(*) " so it's easy to pick the two
-    // kinds apart in the console. We deliberately only listen for pagehide/beforeunload here (not
-    // visibilitychange→hidden) — those fire on a genuine navigate-away/close/refresh, never on a
-    // plain tab-switch, so they can't race ahead of a feedback submission that happens later in the
-    // same page's lifetime.
-    //
-    // The "leaving" write can't go through the normal Firestore SDK: it writes over a long-lived
-    // WebChannel connection, and browsers abort in-flight requests like that the moment the page
-    // starts tearing down — closing right after the loading screen finishes doesn't leave it nearly
-    // enough time to land. navigator.sendBeacon, POSTing straight to Firestore's REST endpoint, is
-    // the one thing browsers guarantee gets sent even after the page is already gone, so that's what
-    // the leaving path uses instead. Feedback submission keeps using the normal SDK write below,
-    // since the page is still fully alive when that happens. ----
-    let sessionLogged=false, sessionLogInFlight=false;
+    // ---- View Count: a running tally of how many people have opened the portfolio. Stored in the
+    // readable `counters/pageViews` doc and shown in the "View Count" section of Let's Connect.
+    // Counted once per browser (a localStorage guard) so one person reloading doesn't inflate it;
+    // every load still reads and displays the current total. ----
+    let latestViewCount=null;
+    function renderViewCount(){
+      if(latestViewCount==null) return;
+      document.querySelectorAll('.js-viewcount').forEach(el=>{ el.textContent=Number(latestViewCount).toLocaleString(); });
+    }
+    async function initViewCount(){
+      const ref=doc(db,'counters','pageViews');
+      try{
+        if(localStorage.getItem('kdp_viewcounted') || navigator.webdriver){
+          const snap=await getDoc(ref);   // already counted, or an automated browser — read & show, don't inflate
+          latestViewCount = snap.exists() ? (snap.data().count||0) : 0;
+        } else {
+          latestViewCount = await runTransaction(db, async tx=>{
+            const snap=await tx.get(ref);
+            const next=(snap.exists() ? (snap.data().count||0) : 0)+1;
+            tx.set(ref, { count: next }); return next;
+          });
+          localStorage.setItem('kdp_viewcounted','1');
+        }
+      }catch(e){ console.error('view count failed', e); }
+      renderViewCount();
+    }
+    initViewCount();
 
-    function firestoreValue(v){
-      return typeof v==='number' ? (Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v }) : { stringValue: String(v) };
+    // ---- activity log: one visit doc per session in "Portfolio Website Activity", written via the
+    // normal SDK once a visit is *confirmed* — whichever comes first: a few seconds on the page, or
+    // the first real interaction. Assigning UnknownUserN here (not at page load) is what keeps the
+    // numbering sequential and gap-free. A feedback submission is logged separately (name prefixed
+    // "(*) "), reusing the same identity so no number is skipped. ----
+    let visitLogged=false, feedbackLogged=false;
+    async function logVisitSession(){
+      if(visitLogged || feedbackLogged || navigator.webdriver) return;
+      visitLogged=true;
+      try{
+        const identity=await getIdentity();   // hands out UnknownUserN in arrival order for a new browser
+        await setDoc(doc(db,'Portfolio Website Activity', newRecordId(identity)), {
+          name: identity, previousNames: previousNamesSoFar(), visitorId: getVisitorId(),
+          at: serverTimestamp(),
+          page: location.pathname + location.search,
+          referrer: document.referrer || 'direct',
+          lang: navigator.language || '',
+          ua: navigator.userAgent.slice(0,180),
+        });
+      }catch(e){ console.error('visit log failed', e); visitLogged=false; }   // let a later trigger retry
     }
-    function beaconLeaveActivity(){
-      if(sessionLogged || sessionLogInFlight || navigator.webdriver) return;
-      const identity=localStorage.getItem('kdp_identity');
-      if(!identity) return;   // not resolved yet — shouldn't happen given the pre-warm call above
-      const fields={
-        name: identity, previousNames: previousNamesSoFar(), visitorId: getVisitorId(),
-        at: new Date().toISOString(),
-        page: location.pathname + location.search,
-        referrer: document.referrer || 'direct',
-        lang: navigator.language || '',
-        ua: navigator.userAgent.slice(0,180),
-      };
-      const body={ fields:{} };
-      for(const k in fields) body.fields[k]=firestoreValue(fields[k]);
-      const url=`https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/`
-        +`${encodeURIComponent('Portfolio Website Activity')}?documentId=${encodeURIComponent(newRecordId(identity))}&key=${firebaseConfig.apiKey}`;
-      if(navigator.sendBeacon(url, new Blob([JSON.stringify(body)], {type:'application/json'}))) sessionLogged=true;
-    }
-    addEventListener('pagehide', beaconLeaveActivity);
-    addEventListener('beforeunload', beaconLeaveActivity);
+    const _visitTimer=setTimeout(logVisitSession, 6000);
+    ['pointerdown','keydown','touchstart'].forEach(ev=>
+      addEventListener(ev, ()=>{ clearTimeout(_visitTimer); logVisitSession(); }, {once:true}));
 
     async function writeFeedback(feedback){
-      if(sessionLogged || sessionLogInFlight || navigator.webdriver) return;
-      sessionLogInFlight=true;
+      if(feedbackLogged || navigator.webdriver) return;
+      feedbackLogged=true;
       try{
         const visitorId=getVisitorId();
         let baseName, previousNames;
@@ -1762,9 +1776,7 @@
           ua: navigator.userAgent.slice(0,180),
           rating: feedback.rating, feedback: feedback.text,
         });
-        sessionLogged=true;
-      }catch(e){ console.error('feedback activity log failed', e); }
-      finally{ sessionLogInFlight=false; }
+      }catch(e){ console.error('feedback activity log failed', e); feedbackLogged=false; }
     }
 
     const loaderEl=document.getElementById('loader');
@@ -2302,6 +2314,8 @@
                        <a class="contact-row" href="https://github.com/Kishore-DP" target="_blank" rel="noopener"><span class="ci">GH</span><span><b>GitHub</b><small>github.com/Kishore-DP</small></span></a>
                        <a class="contact-row" href="https://www.linkedin.com/in/kishore-dp-929a95327/" target="_blank" rel="noopener"><span class="ci">in</span><span><b>LinkedIn</b><small>linkedin.com/in/kishore-dp</small></span></a>
                      </div>
+                     <h3>View Count</h3>
+                     <div class="viewcount"><span class="viewcount-num js-viewcount">…</span><span class="viewcount-cap">people have opened this portfolio</span></div>
                      <h3>What you can hit me up for</h3>
                      <ul>
                        <li>Ideas that need a builder — from concept to working product.</li>
@@ -2750,6 +2764,7 @@
       panelEl.classList.add('show'); document.body.classList.add('panel-open');   // fullscreen panel: no scrim needed, chrome tucks away
       const sc=panelEl.querySelector('.panel-scroll'); if(sc) sc.scrollTop=0;
       renderRadarCharts();
+      renderViewCount();
     }
     function hidePanel(){ panelEl.classList.remove('show'); scrimEl.classList.remove('show'); document.body.classList.remove('panel-open');
       if(burstedOrb){ reformOrb(burstedOrb); burstedOrb=null; } }
@@ -3063,6 +3078,7 @@
           <div class="panel-scroll">${sec.html}</div>
         </section>`).join('');
       renderRadarCharts();
+      renderViewCount();
       // sticky section navigator — jump straight to any topic instead of scrolling through all five
       qvNav.innerHTML=Object.values(SECTORS).map(sec=>
         `<button data-target="qv-${sec.topic}" style="--nav-accent:${sec.accent}" aria-label="Jump to ${sec.title}"><span class="qvn-ico">${sec.ico}</span>${sec.title}</button>`).join('');
