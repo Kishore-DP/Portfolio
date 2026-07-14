@@ -529,6 +529,16 @@
     #onePager .op-proj-head b { font-size:.86rem; color:#1c1a24; font-weight:700; }
     #onePager .op-proj-head span { font-size:.72rem; color:#a56a1f; font-weight:600; white-space:nowrap; }
     #onePager .op-proj p { margin-bottom:0; }
+    /* status pills next to project names */
+    #onePager .op-proj-head span.op-status { display:inline-block; font-size:.58rem; font-weight:800; text-transform:uppercase;
+      letter-spacing:.05em; padding:1px 6px; border-radius:20px; margin-left:6px; vertical-align:middle; line-height:1.6; white-space:nowrap; }
+    #onePager .op-status.live  { background:#e5f7ec !important; color:#1f8b4c !important; border:1px solid #b7e6c9; }
+    #onePager .op-status.dev   { background:#fff2e0 !important; color:#b5701f !important; border:1px solid #f0d6ab; }
+    #onePager .op-status.build { background:#eef0ff !important; color:#4a54c8 !important; border:1px solid #cdd2f5; }
+    /* compact skill chips in the sidebar */
+    #onePager .op-skwrap { display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
+    #onePager .op-skwrap span { display:inline-block; font-size:.68rem; color:#4a4742; background:#f4efe4;
+      border:1px solid #e7ddc6; border-radius:3px; padding:1px 6px; margin:0; line-height:1.5; }
 
     @media (max-width:680px){ #onePager .op-page{ padding:32px 24px; } #onePager .op-name{ font-size:1.5rem; }
       #onePager .op-body{ grid-template-columns:1fr; gap:22px; } #onePager .op-top{ flex-direction:column; } }
@@ -1312,7 +1322,7 @@
       <div class="op-top">
         <div>
           <div class="op-name">KISHORE DP</div>
-          <div class="op-role">Student Developer &middot; AI &middot; Full-Stack &middot; Embedded</div>
+          <div class="op-role">Electronics &amp; VLSI Design Undergraduate &middot; AI, Full-Stack &amp; Game Developer</div>
           <div class="op-contact-line">
             <a href="mailto:kishoredp27@gmail.com">kishoredp27@gmail.com</a><span class="sep">|</span>
             <a href="https://www.linkedin.com/in/kishore-dp-929a95327/" target="_blank" rel="noopener">linkedin.com/in/kishore-dp</a><span class="sep">|</span>
@@ -1328,9 +1338,14 @@
           <div class="op-block">
             <h3>Education</h3>
             <div class="op-item">
+              <b>R.M.K. Engineering College</b>
+              <span>B.E. Electronics &amp; Communication Engineering — VLSI Design</span>
+              <small>Tamil Nadu, India &middot; 2026 – 2030 (expected)</small>
+            </div>
+            <div class="op-item">
               <b>Chennai Public School</b>
-              <span>Anna Nagar, Chennai</span>
-              <small>Grades IX – XII</small>
+              <span>CBSE &middot; Anna Nagar, Chennai</span>
+              <small>Class XII — 90% (2026) &middot; Class X — 95% (2024)</small>
             </div>
           </div>
 
@@ -1338,24 +1353,28 @@
             <h3>Certifications</h3>
             <div class="op-item">
               <b>Data Science &amp; AI</b>
-              <span>IIT Madras &middot; Centre for Outreach &amp; Digital Education</span>
+              <span>IIT Madras &middot; Centre for Outreach &amp; Digital Education (CODE)</span>
               <small>8-week certification &middot; 2024</small>
             </div>
           </div>
 
           <div class="op-block">
             <h3>Technical Skills</h3>
-            <div class="op-item"><b>Web</b><span>JavaScript, Three.js, HTML/CSS</span></div>
-            <div class="op-item"><b>Game Development</b><span>Unity (C#), Roblox Studio (Lua)</span></div>
-            <div class="op-item"><b>Embedded / IoT</b><span>Arduino, ESP32</span></div>
-            <div class="op-item"><b>AI / ML</b><span>Python, applied fundamentals</span></div>
+            <div class="op-item"><b>Languages</b><div class="op-skwrap"><span>JavaScript</span><span>TypeScript</span><span>Python</span><span>C#</span><span>Lua</span><span>C</span></div></div>
+            <div class="op-item"><b>Web &amp; App</b><div class="op-skwrap"><span>React</span><span>Next.js</span><span>React Native</span><span>Three.js / WebGL</span><span>Node.js</span><span>Firebase</span><span>Tailwind</span></div></div>
+            <div class="op-item"><b>Game Dev</b><div class="op-skwrap"><span>Unity</span><span>Roblox Studio</span></div></div>
+            <div class="op-item"><b>Embedded / IoT</b><div class="op-skwrap"><span>Arduino</span><span>ESP32</span><span>Electronics</span></div></div>
+            <div class="op-item"><b>AI &amp; Tools</b><div class="op-skwrap"><span>Claude / AI Agents</span><span>Prompt Engineering</span><span>Git</span><span>Figma</span></div></div>
           </div>
 
           <div class="op-block">
-            <h3>Athletics</h3>
+            <h3>Achievements</h3>
             <ul>
-              <li>Basketball &amp; Carrom — Intramural Winner</li>
-              <li>Kho-Kho &amp; 4&times;100m Relay — Silver, U-19</li>
+              <li><b>Basketball</b> — Intramural Winners, 2022–23</li>
+              <li><b>Carrom</b> — Intramural Winner, 2024–25 &amp; 2025–26</li>
+              <li><b>Kho-Kho</b> — Silver, U-19 (2025)</li>
+              <li><b>4×100m Relay</b> — Silver, U-19 (2025)</li>
+              <li><b>Football &amp; Chess</b> — Intramural Runner-Up, 2025–26</li>
             </ul>
           </div>
         </aside>
@@ -1363,22 +1382,26 @@
         <main class="op-main">
           <div class="op-block">
             <h3>Summary</h3>
-            <p>High-school builder working across AI, full-stack development, game development and embedded systems. Learns by shipping — prototyping quickly, iterating fast, and refining until it feels right.</p>
+            <p>Incoming Electronics &amp; Communication Engineering (VLSI Design) undergraduate who already ships production software. I build across the stack — an AI website-generation SaaS, a hand-written real-time 3D engine, a cross-platform music app and a multiplayer game — and I learn by building: prototype fast, measure, and refine until it feels right. Equally at home with silicon-adjacent hardware (Arduino / ESP32) and AI-assisted full-stack products.</p>
           </div>
 
           <div class="op-block">
             <h3>Projects</h3>
             <div class="op-proj">
-              <div class="op-proj-head"><b>Interactive 3D Portfolio</b><span>Three.js &middot; WebGL</span></div>
-              <p>Designed and built a walkable 3D "medieval market" portfolio from scratch — custom loading sequence, dynamic camera work, and this document.</p>
+              <div class="op-proj-head"><b>SiteGen AI <span class="op-status dev">In Dev</span></b><span>Next.js &middot; React &middot; AI SaaS</span></div>
+              <p>An AI platform that turns a single Google Maps link into a fully hosted business website — imports business data via the Google Places API, generates copy and layout with Claude &amp; ChatGPT, then deploys to Vercel / Cloudflare in minutes.</p>
             </div>
             <div class="op-proj">
-              <div class="op-proj-head"><b>Playnix</b><span>React Native &middot; Expo &middot; Firebase</span></div>
-              <p>A music app with offline library and social features — friends, chat, presence and shared playlists.</p>
+              <div class="op-proj-head"><b>Interactive 3D Portfolio <span class="op-status live">Live</span></b><span>Three.js &middot; WebGL &middot; PWA</span></div>
+              <p>A walkable "medieval market" portfolio built from scratch on raw Three.js — custom BVH collision, draw-call batching and GPU-adaptive quality hold 60fps even on integrated graphics. Installable offline PWA (this document).</p>
             </div>
             <div class="op-proj">
-              <div class="op-proj-head"><b>Steal a Brainrot <span style="font-weight:400;opacity:.7">(Roblox)</span></b><span>Lua &middot; Roblox Studio</span></div>
-              <p>An original multiplayer base-building &amp; PvP raiding game built from the ground up in Roblox Studio — collect income-generating brainrots, defend your base, and steal from rivals.</p>
+              <div class="op-proj-head"><b>Playnix <span class="op-status dev">In Dev</span></b><span>React Native &middot; Expo &middot; Firebase</span></div>
+              <p>A free, social music app — one search fans out across four open catalogues, downloaded tracks play fully offline, and a Firebase layer adds friends, chat, presence and shared playlists.</p>
+            </div>
+            <div class="op-proj">
+              <div class="op-proj-head"><b>Steal a Brainrot <span style="font-weight:400;opacity:.7">(Roblox)</span> <span class="op-status build">Building</span></b><span>Lua &middot; Roblox Studio</span></div>
+              <p>An original multiplayer base-building &amp; PvP raiding game built ground-up in Roblox Studio — a server-authoritative economy, rarity-tiered income units, base defense and a rebirth prestige system.</p>
             </div>
           </div>
 
@@ -1386,7 +1409,8 @@
             <h3>Leadership &amp; Activities</h3>
             <ul>
               <li><b>House Captain</b>, Diadem House — elected student leadership role, 2024–25</li>
-              <li><b>Model United Nations</b> delegate — debate and diplomacy</li>
+              <li><b>INNOVERSE '25 Project Expo</b> — exhibited at SRM Institute of Science &amp; Technology, Vadapalani (Nov 2025)</li>
+              <li><b>Model United Nations</b> delegate — debate, diplomacy &amp; public speaking</li>
             </ul>
           </div>
 
