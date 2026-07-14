@@ -485,7 +485,7 @@
     /* ===== One-Pager: an actual resume-formatted document + QR code, for handing out at events ===== */
     #onePager { position:fixed; inset:0; z-index:70; display:none; flex-direction:column; background:#0e0d0c; opacity:0; transition:opacity .4s var(--ease-smooth); }
     #onePager.show { display:flex; opacity:1; }
-    #onePager .op-scroll { flex:1 1 auto; overflow-y:auto; overscroll-behavior:contain; padding:40px 20px 70px; display:flex; justify-content:center; }
+    #onePager .op-scroll { flex:1 1 auto; overflow-y:auto; overscroll-behavior:contain; padding:40px 20px 70px; display:flex; justify-content:center; align-items:flex-start; }
     #onePager .op-page { width:100%; max-width:800px; min-height:920px; background:#fdfcfa; color:#22201d; border-radius:6px;
       box-shadow:0 40px 110px rgba(0,0,0,.6); padding:46px 50px; font-family:var(--font-body); font-size:.85rem; line-height:1.5; }
 
@@ -1322,7 +1322,7 @@
       <div class="op-top">
         <div>
           <div class="op-name">KISHORE DP</div>
-          <div class="op-role">Electronics &amp; VLSI Design Undergraduate &middot; AI, Full-Stack &amp; Game Developer</div>
+          <div class="op-role">Electronics &amp; VLSI Design Undergraduate &middot; AI-Assisted App, Web &amp; Game Builder</div>
           <div class="op-contact-line">
             <a href="mailto:kishoredp27@gmail.com">kishoredp27@gmail.com</a><span class="sep">|</span>
             <a href="https://www.linkedin.com/in/kishore-dp-929a95327/" target="_blank" rel="noopener">linkedin.com/in/kishore-dp</a><span class="sep">|</span>
@@ -1359,19 +1359,18 @@
           </div>
 
           <div class="op-block">
-            <h3>Technical Skills</h3>
-            <div class="op-item"><b>Languages</b><div class="op-skwrap"><span>JavaScript</span><span>TypeScript</span><span>Python</span><span>C#</span><span>Lua</span><span>C</span></div></div>
-            <div class="op-item"><b>Web &amp; App</b><div class="op-skwrap"><span>React</span><span>Next.js</span><span>React Native</span><span>Three.js / WebGL</span><span>Node.js</span><span>Firebase</span><span>Tailwind</span></div></div>
-            <div class="op-item"><b>Game Dev</b><div class="op-skwrap"><span>Unity</span><span>Roblox Studio</span></div></div>
-            <div class="op-item"><b>Embedded / IoT</b><div class="op-skwrap"><span>Arduino</span><span>ESP32</span><span>Electronics</span></div></div>
-            <div class="op-item"><b>AI &amp; Tools</b><div class="op-skwrap"><span>Claude / AI Agents</span><span>Prompt Engineering</span><span>Git</span><span>Figma</span></div></div>
+            <h3>Skills</h3>
+            <div class="op-item"><b>Builds With AI</b><div class="op-skwrap"><span>Claude</span><span>AI Coding Agents</span><span>Prompt Engineering</span></div></div>
+            <div class="op-item"><b>Ships</b><div class="op-skwrap"><span>Web Apps</span><span>Mobile Apps</span><span>3D / Interactive Sites</span><span>Games</span></div></div>
+            <div class="op-item"><b>Tools &amp; Platforms</b><div class="op-skwrap"><span>GitHub</span><span>Vercel</span><span>Firebase</span><span>Figma</span><span>Roblox Studio</span><span>VS Code</span></div></div>
+            <div class="op-item"><b>Electronics / IoT</b><div class="op-skwrap"><span>Arduino</span><span>ESP32</span></div></div>
           </div>
 
           <div class="op-block">
             <h3>Achievements</h3>
             <ul>
               <li><b>Basketball</b> — Intramural Winners, 2022–23</li>
-              <li><b>Carrom</b> — Intramural Winner, 2024–25 &amp; 2025–26</li>
+              <li><b>Carrom</b> — Intramural Winner (2024–25 &amp; 2025–26) &middot; Promising Player (2025–26)</li>
               <li><b>Kho-Kho</b> — Silver, U-19 (2025)</li>
               <li><b>4×100m Relay</b> — Silver, U-19 (2025)</li>
               <li><b>Football &amp; Chess</b> — Intramural Runner-Up, 2025–26</li>
@@ -1382,7 +1381,7 @@
         <main class="op-main">
           <div class="op-block">
             <h3>Summary</h3>
-            <p>Incoming Electronics &amp; Communication Engineering (VLSI Design) undergraduate who already ships production software. I build across the stack — an AI website-generation SaaS, a hand-written real-time 3D engine, a cross-platform music app and a multiplayer game — and I learn by building: prototype fast, measure, and refine until it feels right. Equally at home with silicon-adjacent hardware (Arduino / ESP32) and AI-assisted full-stack products.</p>
+            <p>Incoming Electronics &amp; Communication Engineering (VLSI Design) undergraduate and an AI-native builder. I turn ideas into shipped products — web apps, mobile apps, interactive 3D sites and games — by pairing product thinking with AI coding tools like Claude: I design it, direct the build, then deploy and refine it. I own projects end to end, from concept and UI to hosting and iteration, and back it up with hands-on electronics (Arduino / ESP32) that ties into my VLSI focus.</p>
           </div>
 
           <div class="op-block">
@@ -1393,7 +1392,7 @@
             </div>
             <div class="op-proj">
               <div class="op-proj-head"><b>Interactive 3D Portfolio <span class="op-status live">Live</span></b><span>Three.js &middot; WebGL &middot; PWA</span></div>
-              <p>A walkable "medieval market" portfolio built from scratch on raw Three.js — custom BVH collision, draw-call batching and GPU-adaptive quality hold 60fps even on integrated graphics. Installable offline PWA (this document).</p>
+              <p>A walkable "medieval market" portfolio built on Three.js — BVH collision, draw-call batching and GPU-adaptive quality hold 60fps even on integrated graphics. Installable offline PWA (this document).</p>
             </div>
             <div class="op-proj">
               <div class="op-proj-head"><b>Playnix <span class="op-status dev">In Dev</span></b><span>React Native &middot; Expo &middot; Firebase</span></div>
