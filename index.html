@@ -27,9 +27,6 @@
   <meta name="twitter:description" content="Walk through a floating medieval market to explore my work — about me, expertise, creations, work experience and contact, all in an interactive 3D world." />
   <meta name="twitter:image" content="https://kishore-dp.github.io/Portfolio/og-image.jpg" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=Cormorant+Garamond:ital@1&family=Caveat:wght@500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <script type="application/ld+json">
   {
@@ -49,11 +46,17 @@
   }
   </script>
   <style>
+    /* KG Miss Steward — single handwriting typeface used across the whole site */
+    @font-face {
+      font-family:'KG Miss Steward';
+      src:url('fonts/KGMissSteward.ttf') format('truetype');
+      font-weight:normal; font-style:normal; font-display:swap;
+    }
     :root {
       --ui:#11161b; --card:rgba(20,26,33,.82); --txt:#eaf2ea;
-      --font-display:'Cinzel','Georgia',serif;           /* medieval-inscriptional display type — signage, titles, statement moments */
-      --font-accent:'Cormorant Garamond','Georgia',serif; /* italic flourish for quiet asides */
-      --font-body:'Manrope',-apple-system,'Segoe UI',sans-serif;   /* everything readable */
+      --font-display:'KG Miss Steward','Georgia',serif;    /* all display/heading text */
+      --font-accent:'KG Miss Steward','Georgia',serif;     /* all accent text */
+      --font-body:'KG Miss Steward',-apple-system,'Segoe UI',sans-serif;   /* all body text */
       --brand:#e8b34d; --brand-2:#ffd873;                  /* signature warm gold — ties the loading bar, chrome and accents together */
       --ease-out:cubic-bezier(.16,1,.3,1);                 /* confident, decisive settle */
       --ease-spring:cubic-bezier(.34,1.56,.64,1);          /* playful overshoot for pops */
@@ -578,8 +581,8 @@
     #devTerminal .term-bar { flex:0 0 auto; display:flex; align-items:center; gap:8px; padding:11px 14px; background:#161c17; border-bottom:1px solid rgba(123,201,111,.15); }
     #devTerminal .term-dot { width:11px; height:11px; border-radius:50%; }
     #devTerminal .term-dot.r{background:#e0555f;} #devTerminal .term-dot.y{background:#e0c05a;} #devTerminal .term-dot.g{background:#7bc96f;}
-    #devTerminal .term-title { margin-left:8px; font-family:'Courier New',monospace; font-size:.78rem; color:#7d8a7d; }
-    #devTerminal .term-body { flex:1 1 auto; margin:0; padding:20px 22px 26px; overflow-y:auto; font-family:'Courier New',monospace;
+    #devTerminal .term-title { margin-left:8px; font-family:'KG Miss Steward',monospace; font-size:.78rem; color:#7d8a7d; }
+    #devTerminal .term-body { flex:1 1 auto; margin:0; padding:20px 22px 26px; overflow-y:auto; font-family:'KG Miss Steward',monospace;
       font-size:.92rem; line-height:1.65; color:#7bc96f; white-space:pre-wrap; }
     #devTerminal .term-body .tc { color:#e0a45a; }
     #devTerminal .term-body .tw { color:#eef5ee; }
@@ -723,8 +726,8 @@
       color:color-mix(in srgb,var(--accent,#6ba8e0) 55%, transparent); font-size:.8rem; }
 
     /* SKILLS — handwritten polaroid captions, stencil headers, strings on the tool tags */
-    [data-topic="skills"] .cert figcaption b { font-family:'Caveat',cursive; font-size:1.38rem; font-weight:600; margin-bottom:0; }
-    [data-topic="skills"] .cert figcaption small { font-family:'Caveat',cursive; font-size:1.05rem; color:#796e56; line-height:1.2; }
+    [data-topic="skills"] .cert figcaption b { font-family:'KG Miss Steward',cursive; font-size:1.38rem; font-weight:600; margin-bottom:0; }
+    [data-topic="skills"] .cert figcaption small { font-family:'KG Miss Steward',cursive; font-size:1.05rem; color:#796e56; line-height:1.2; }
     /* Expertise sub-headers — each section its own color, big display type, gradient fill + underline */
     [data-topic="skills"] .xp-head { --sec:#ffb54d; align-items:center; gap:16px; margin:0 0 22px; padding-bottom:13px; position:relative; }
     [data-topic="skills"] .xp-head::after { content:''; position:absolute; left:0; bottom:0; width:100%; height:2px; border-radius:2px;
@@ -739,7 +742,7 @@
     [data-topic="skills"] .xp-sec:hover .xp-head .xp-ico { transform:rotate(-6deg) scale(1.08); box-shadow:0 0 34px color-mix(in srgb, var(--sec) 40%, transparent), inset 0 1px 0 rgba(255,255,255,.12); }
     [data-topic="skills"] .xp-head .xp-count { color:var(--sec); background:color-mix(in srgb, var(--sec) 15%, transparent);
       border-color:color-mix(in srgb, var(--sec) 42%, transparent); font-size:.72rem; padding:5px 13px; }
-    [data-topic="skills"] .xp-card h4 { font-family:'Caveat',cursive; font-size:1.5rem; font-weight:600; }
+    [data-topic="skills"] .xp-card h4 { font-family:'KG Miss Steward',cursive; font-size:1.5rem; font-weight:600; }
     [data-topic="skills"] .xp-card::after { content:''; position:absolute; top:12px; left:13px; width:30px; height:1.5px; transform:rotate(36deg); transform-origin:left center;
       background:linear-gradient(90deg, color-mix(in srgb,var(--accent,#e0a45a) 65%, transparent), transparent); }   /* the tag's string */
 
@@ -763,14 +766,14 @@
       transform:rotate(-8deg); }   /* wax seal */
 
     /* CONTACT — console monospace, blinking caret, live frequency strip */
-    [data-topic="contact"] .panel-scroll .lead { font-family:'JetBrains Mono',monospace; font-style:normal; font-size:1.04rem; line-height:1.65; color:#ffe0d8;
+    [data-topic="contact"] .panel-scroll .lead { font-family:'KG Miss Steward',monospace; font-style:normal; font-size:1.04rem; line-height:1.65; color:#ffe0d8;
       padding:16px 19px; border:1px solid color-mix(in srgb,var(--accent,#e07a6b) 34%, transparent); border-radius:10px;
       background:linear-gradient(180deg, color-mix(in srgb,var(--accent,#e07a6b) 9%, transparent), transparent 70%); }
     [data-topic="contact"] .panel-scroll .lead strong { font-style:normal; }
     [data-topic="contact"] .panel-scroll .lead::after { content:'\258C'; margin-left:5px; color:var(--accent,#e07a6b); animation:caretBlink 1.1s step-end infinite; }
-    [data-topic="contact"] .panel-scroll h3 { font-family:'JetBrains Mono',monospace; letter-spacing:.3em; }
-    [data-topic="contact"] .panel-scroll .contact-row b { font-family:'JetBrains Mono',monospace; letter-spacing:.02em; }
-    [data-topic="contact"] .panel-scroll .contact-row small { font-family:'JetBrains Mono',monospace; font-size:.75rem; }
+    [data-topic="contact"] .panel-scroll h3 { font-family:'KG Miss Steward',monospace; letter-spacing:.3em; }
+    [data-topic="contact"] .panel-scroll .contact-row b { font-family:'KG Miss Steward',monospace; letter-spacing:.02em; }
+    [data-topic="contact"] .panel-scroll .contact-row small { font-family:'KG Miss Steward',monospace; font-size:.75rem; }
     [data-topic="contact"] .panel-scroll .contact-list::before { content:''; display:block; height:5px; border-radius:99px; margin-bottom:3px; opacity:.55;
       background:repeating-linear-gradient(90deg, var(--accent,#e07a6b) 0 9px, color-mix(in srgb,var(--accent,#e07a6b) 22%, transparent) 9px 20px);
       animation:freqSlide 1.5s linear infinite; }
@@ -781,12 +784,12 @@
     /* every market titles itself differently — same family, different voices */
     #panel[data-topic="skills"] h2, #quickView .qv-sec[data-topic="skills"] .qv-sec-head h2 { text-transform:uppercase; letter-spacing:.13em; }
     #panel[data-topic="building"] h2, #quickView .qv-sec[data-topic="building"] .qv-sec-head h2 { font-family:var(--font-accent); font-style:italic; font-weight:600; letter-spacing:.01em; }
-    #panel[data-topic="contact"] h2, #quickView .qv-sec[data-topic="contact"] .qv-sec-head h2 { font-family:'JetBrains Mono',monospace; font-weight:700; letter-spacing:-.02em; }
+    #panel[data-topic="contact"] h2, #quickView .qv-sec[data-topic="contact"] .qv-sec-head h2 { font-family:'KG Miss Steward',monospace; font-weight:700; letter-spacing:-.02em; }
     #panel[data-topic="contact"] h2::after, #quickView .qv-sec[data-topic="contact"] .qv-sec-head h2::after { content:'_';
       -webkit-text-fill-color:var(--accent,#ff7e64); animation:caretBlink 1.2s step-end infinite; }
     #panel[data-topic="done"] h2, #quickView .qv-sec[data-topic="done"] .qv-sec-head h2 { letter-spacing:.05em; }
     /* handwritten subtitles — a human hand under the machine-set headline */
-    #panel .psub, #quickView .qv-sec-sub { font-family:'Caveat',cursive; font-size:1.34rem; line-height:1.35; color:#c9cec7; max-width:none; }
+    #panel .psub, #quickView .qv-sec-sub { font-family:'KG Miss Steward',cursive; font-size:1.34rem; line-height:1.35; color:#c9cec7; max-width:none; }
     /* topic icons wear a slow-turning dashed setting-ring — tiny machinery everywhere */
     #panel .eyebrow .ico, #quickView .qv-sec-ico { position:relative; }
     #panel .eyebrow .ico::after, #quickView .qv-sec-ico::after { content:''; position:absolute; inset:-6px; border-radius:inherit;
@@ -835,7 +838,7 @@
       background:linear-gradient(90deg, color-mix(in srgb, var(--pc) 12%, transparent), transparent 62%);
       box-shadow:-1px 0 16px color-mix(in srgb, var(--pc) 22%, transparent); }
     /* section kickers ("Engineering highlights"…): mono, colored, with a glowing play marker + rule */
-    [data-topic="done"] .pc-body-in h3 { font-family:'JetBrains Mono',monospace; font-size:.8rem; letter-spacing:.2em; text-transform:uppercase;
+    [data-topic="done"] .pc-body-in h3 { font-family:'KG Miss Steward',monospace; font-size:.8rem; letter-spacing:.2em; text-transform:uppercase;
       font-weight:700; color:var(--pc); display:flex; align-items:center; gap:11px; margin:26px 0 15px; }
     [data-topic="done"] .pc-body-in h3::before { content:'\25B8'; font-size:1.1em; color:var(--pc); filter:drop-shadow(0 0 7px var(--pc)); }
     [data-topic="done"] .pc-body-in h3::after { content:''; flex:1 1 auto; height:1px;
@@ -865,12 +868,12 @@
       background:color-mix(in srgb, var(--pc) 24%, rgba(255,255,255,.07)); border:1px solid color-mix(in srgb, var(--pc) 28%, transparent);
       border-radius:14px; overflow:hidden; box-shadow:0 14px 34px rgba(0,0,0,.34); }
     [data-topic="done"] .cs-tl div { background:#12151c; padding:13px 16px; display:flex; flex-direction:column; gap:5px; }
-    [data-topic="done"] .cs-tl b { font-family:'JetBrains Mono',monospace; font-size:.56rem; letter-spacing:.16em; text-transform:uppercase; color:var(--pc); font-weight:700; }
+    [data-topic="done"] .cs-tl b { font-family:'KG Miss Steward',monospace; font-size:.56rem; letter-spacing:.16em; text-transform:uppercase; color:var(--pc); font-weight:700; }
     [data-topic="done"] .cs-tl span { font-size:.9rem; color:#eef1ea; font-weight:600; letter-spacing:.01em; }
     /* technical-breakdown sub-blocks */
     [data-topic="done"] .cs-tech { display:grid; gap:15px; margin:2px 0 10px; }
     [data-topic="done"] .cs-tech-block { padding:16px 19px; border-radius:13px; background:rgba(255,255,255,.022); border:1px solid rgba(255,255,255,.06); }
-    [data-topic="done"] .cs-tech-block h4 { margin:0 0 11px; font-family:'JetBrains Mono',monospace; font-size:.73rem; letter-spacing:.15em; text-transform:uppercase;
+    [data-topic="done"] .cs-tech-block h4 { margin:0 0 11px; font-family:'KG Miss Steward',monospace; font-size:.73rem; letter-spacing:.15em; text-transform:uppercase;
       color:#e7ebe4; display:flex; align-items:center; gap:9px; }
     [data-topic="done"] .cs-tech-block h4::before { content:''; width:8px; height:8px; border-radius:2px; transform:rotate(45deg); flex:0 0 auto;
       background:var(--pc); box-shadow:0 0 9px var(--pc); }
@@ -881,7 +884,7 @@
     /* architecture flow diagram */
     [data-topic="done"] .cs-flow { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin:6px 0 4px; padding:17px; border-radius:13px;
       background:linear-gradient(180deg, color-mix(in srgb, var(--pc) 8%, transparent), transparent); border:1px dashed color-mix(in srgb, var(--pc) 36%, transparent); }
-    [data-topic="done"] .cs-flow .nd { font-family:'JetBrains Mono',monospace; font-size:.72rem; padding:8px 13px; border-radius:9px; color:#eef1ea; white-space:nowrap;
+    [data-topic="done"] .cs-flow .nd { font-family:'KG Miss Steward',monospace; font-size:.72rem; padding:8px 13px; border-radius:9px; color:#eef1ea; white-space:nowrap;
       background:color-mix(in srgb, var(--pc) 15%, rgba(255,255,255,.03)); border:1px solid color-mix(in srgb, var(--pc) 42%, transparent);
       transition:transform .2s var(--ease-spring), box-shadow .2s ease; }
     [data-topic="done"] .cs-flow .nd:hover { transform:translateY(-3px); box-shadow:0 6px 16px color-mix(in srgb, var(--pc) 30%, transparent); }
