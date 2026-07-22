@@ -329,8 +329,7 @@
     .pc { margin:0 0 16px; border-radius:18px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.09);
       border-left:3px solid var(--accent,#7bc96f); overflow:hidden; transition:transform .25s var(--ease-out), border-color .2s ease, box-shadow .25s ease, background .2s ease; }
     .pc:hover { transform:translateY(-3px); border-color:color-mix(in srgb,var(--accent,#7bc96f) 55%, rgba(255,255,255,.1)); box-shadow:0 20px 44px rgba(0,0,0,.35); background:rgba(255,255,255,.05); }
-    .pc-head { cursor:pointer; padding:18px 21px; display:flex; align-items:center; gap:16px; -webkit-tap-highlight-color:transparent; }
-    .pc-head:focus-visible { outline:2px solid var(--accent,#7bc96f); outline-offset:-2px; }
+    .pc-head { padding:18px 21px; display:flex; align-items:center; gap:16px; -webkit-tap-highlight-color:transparent; }
     .pc-thumb { flex:0 0 auto; width:64px; height:64px; border-radius:13px; overflow:hidden;
       background:color-mix(in srgb,var(--accent,#7bc96f) 16%, rgba(255,255,255,.04));
       border:1px solid color-mix(in srgb,var(--accent,#7bc96f) 30%, transparent); display:flex; align-items:center; justify-content:center; font-size:1.6rem; }
@@ -345,10 +344,17 @@
     .pc-badge { font-size:.62rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:3px 10px; border-radius:99px;
       color:#dff5df; background:color-mix(in srgb, #6bc96f 30%, transparent); border:1px solid color-mix(in srgb,#6bc96f 55%, transparent); }
     .pc-badge.pc-badge-amber { color:#ffe9c2; background:color-mix(in srgb,#e0a45a 30%, transparent); border-color:color-mix(in srgb,#e0a45a 55%, transparent); }
-    .pc-chevron { flex:0 0 auto; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-      background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); color:#c9cdc8; font-size:1rem;
-      transition:transform .25s var(--ease-out), background .2s ease; }
-    .pc-head:hover .pc-chevron, .pc-head:focus-visible .pc-chevron { transform:translateX(3px); background:color-mix(in srgb,var(--accent,#7bc96f) 22%, rgba(255,255,255,.04)); }
+    /* per-card action buttons — neo-brutalist, matching the start-screen mode buttons */
+    .pc-actions { flex:0 0 auto; display:flex; flex-direction:column; gap:9px; align-items:stretch; }
+    .pc-btn { font-family:var(--font-display); font-weight:800; font-size:.8rem; letter-spacing:.03em; text-transform:uppercase; text-align:center;
+      white-space:nowrap; padding:9px 16px; border-radius:9px; cursor:pointer; text-decoration:none; color:#17130e;
+      border:2.5px solid #17130e; box-shadow:4px 4px 0 #c4c8cf;
+      transition:transform .12s ease, box-shadow .12s ease; }
+    .pc-btn:hover, .pc-btn:focus-visible { transform:translate(-2px,-2px); box-shadow:6px 6px 0 #c4c8cf; outline:none; }
+    .pc-btn:active { transform:translate(2px,2px); box-shadow:0 0 0 #c4c8cf; }
+    .pc-try { background:var(--pc,#7bc96f); }
+    .pc-read { background:#eceae2; }
+    @media (max-width:640px){ .pc-btn{ font-size:.72rem; padding:8px 12px; } }
     .pc-body { display:none; }
     .pc-body-in { padding:19px 0 24px; }
     .pc-meta { display:flex; flex-wrap:wrap; gap:12px 30px; margin-bottom:18px; }
@@ -828,7 +834,6 @@
     [data-topic="done"] .pc-thumb { border-color:color-mix(in srgb, var(--pc) 42%, transparent);
       background:color-mix(in srgb, var(--pc) 15%, rgba(255,255,255,.03)); }
     [data-topic="done"] .pc-thumb span { color:var(--pc); font-size:2rem; text-shadow:0 0 20px color-mix(in srgb, var(--pc) 60%, transparent); }
-    [data-topic="done"] .pc-chevron { color:var(--pc); }
     /* the badge borrows the project color */
     [data-topic="done"] .pc-badge, [data-topic="done"] .pc-badge-amber { color:color-mix(in srgb, var(--pc) 85%, #fff);
       background:color-mix(in srgb, var(--pc) 20%, transparent); border-color:color-mix(in srgb, var(--pc) 50%, transparent); }
@@ -1991,13 +1996,16 @@
                      <div class="pc-sec"><h3><span class="pc-sec-ico">★</span>Featured Projects</h3></div>
 
                      <div class="pc" style="--pc:#2fd8ff">
-                       <div class="pc-head" role="button" tabindex="0">
+                       <div class="pc-head">
                          <div class="pc-thumb"><img src="screenshots/feature-market-overview.jpg" alt="" loading="lazy"></div>
                          <div class="pc-head-text">
                            <h3>Interactive 3D Portfolio <span class="pc-badge">This site</span></h3>
                            <p class="pc-tagline">A hand-built real-time 3D portfolio engine — walk a floating market where every stall is a section.</p>
                          </div>
-                         <span class="pc-chevron">›</span>
+                         <div class="pc-actions">
+                           <a class="pc-btn pc-try" href="https://kishore-dp.github.io/Portfolio/" target="_blank" rel="noopener">Try it Out!</a>
+                           <button class="pc-btn pc-read" type="button">Read About It</button>
+                         </div>
                        </div>
                        <div class="pc-body"><div class="pc-body-in">
                          <div class="cs-tl">
@@ -2066,13 +2074,16 @@
                      <div class="pc-sec"><h3><span class="pc-sec-ico">⚡</span>Active Projects</h3></div>
 
                      <div class="pc" style="--pc:#7c6cff">
-                       <div class="pc-head" role="button" tabindex="0">
+                       <div class="pc-head">
                          <div class="pc-thumb"><span>S</span></div>
                          <div class="pc-head-text">
                            <h3>SiteGen AI <span class="pc-badge pc-badge-amber">In Development</span></h3>
                            <p class="pc-tagline">Paste a Google Maps link, get a live business website — the AI imports, designs, builds and deploys it in minutes.</p>
                          </div>
-                         <span class="pc-chevron">›</span>
+                         <div class="pc-actions">
+                           <a class="pc-btn pc-try" href="https://kishore-dp.github.io/sitegen-ai/" target="_blank" rel="noopener">Try it Out!</a>
+                           <button class="pc-btn pc-read" type="button">Read About It</button>
+                         </div>
                        </div>
                        <div class="pc-body"><div class="pc-body-in">
                          <div class="cs-tl">
@@ -2125,13 +2136,16 @@
                      </div>
 
                      <div class="pc" style="--pc:#ff4fa3">
-                       <div class="pc-head" role="button" tabindex="0">
+                       <div class="pc-head">
                          <div class="pc-thumb"><span>P</span></div>
                          <div class="pc-head-text">
                            <h3>Playnix <span class="pc-badge pc-badge-amber">In progress</span></h3>
                            <p class="pc-tagline">A free, social music app — multi-source discovery, offline downloads and friends built in.</p>
                          </div>
-                         <span class="pc-chevron">›</span>
+                         <div class="pc-actions">
+                           <a class="pc-btn pc-try" href="https://kishore-dp.github.io/Playnix/" target="_blank" rel="noopener">Try it Out!</a>
+                           <button class="pc-btn pc-read" type="button">Read About It</button>
+                         </div>
                        </div>
                        <div class="pc-body"><div class="pc-body-in">
                          <div class="cs-tl">
@@ -2178,13 +2192,16 @@
                      </div>
 
                      <div class="pc" style="--pc:#ff6a2c">
-                       <div class="pc-head" role="button" tabindex="0">
+                       <div class="pc-head">
                          <div class="pc-thumb"><span>R</span></div>
                          <div class="pc-head-text">
                            <h3>Steal a Brainrot <span class="pc-badge pc-badge-amber">In Development</span></h3>
                            <p class="pc-tagline">An original multiplayer Roblox game — collect income units, defend your base, raid rivals.</p>
                          </div>
-                         <span class="pc-chevron">›</span>
+                         <div class="pc-actions">
+                           <a class="pc-btn pc-try" href="https://www.roblox.com/games/138401927044545/BrainRot-Wars" target="_blank" rel="noopener">Try it Out!</a>
+                           <button class="pc-btn pc-read" type="button">Read About It</button>
+                         </div>
                        </div>
                        <div class="pc-body"><div class="pc-body-in">
                          <div class="cs-tl">
@@ -2848,8 +2865,7 @@
       projScrimEl.classList.add('show'); projModalEl.classList.add('show'); sfx('whoosh');
     }
     function closeProjectModal(){ projScrimEl.classList.remove('show'); projModalEl.classList.remove('show'); }
-    document.addEventListener('click', e=>{ const head=e.target.closest('.pc-head'); if(head) openProjectModal(head.closest('.pc')); });
-    document.addEventListener('keydown', e=>{ if((e.code==='Enter'||e.code==='Space') && document.activeElement && document.activeElement.classList.contains('pc-head')){ openProjectModal(document.activeElement.closest('.pc')); e.preventDefault(); } });
+    document.addEventListener('click', e=>{ const rd=e.target.closest('.pc-read'); if(rd) openProjectModal(rd.closest('.pc')); });
     document.getElementById('projModalClose').addEventListener('click', closeProjectModal);
     projScrimEl.addEventListener('click', closeProjectModal);
     addEventListener('keydown', e=>{ if(e.code==='Escape' && projModalEl.classList.contains('show')){ closeProjectModal(); e.stopImmediatePropagation(); } }, true);
