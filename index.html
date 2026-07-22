@@ -3036,12 +3036,19 @@
       }));
       const qvBody=qvEl.querySelector('.qv-body');
       const setActive=id=>navBtns.forEach(b=>b.classList.toggle('active', b.dataset.target===id));
-      const io=new IntersectionObserver(entries=>{
-        const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
-        if(visible) setActive(visible.target.id);
-      }, { root:qvBody, threshold:[0.15,0.3,0.5,0.7] });
-      qvInner.querySelectorAll('.qv-sec').forEach(s=>io.observe(s));
-      if(navBtns[0]) navBtns[0].classList.add('active'); }
+      // scroll-spy: active = the last section whose top has scrolled past a trigger line near the top of
+      // the view. Height-independent — the old ratio-based observer mis-fired on tall vs short sections
+      // (it stuck on the short, empty Work Experience while the tall Let's Connect filled the screen).
+      const qvSecs=[...qvInner.querySelectorAll('.qv-sec')];
+      function updateQvActive(){
+        const line=qvBody.getBoundingClientRect().top + 130;
+        let cur=qvSecs[0];
+        for(const s of qvSecs){ if(s.getBoundingClientRect().top - line <= 0) cur=s; }
+        if(qvBody.scrollTop + qvBody.clientHeight >= qvBody.scrollHeight - 4) cur=qvSecs[qvSecs.length-1];   // at the very bottom -> last section, even if its top never reaches the line
+        if(cur) setActive(cur.id);
+      }
+      qvBody.addEventListener('scroll', updateQvActive, {passive:true});
+      updateQvActive(); }
     qvInner.addEventListener('click', e=>{ const b=e.target.closest('.qv-copy-link'); if(b) copyTopicLink(b.dataset.topic, b.dataset.title); });
     function qvOpen(){ buildQuickView();
       document.getElementById('qvTo3D').style.display = started?'none':'';         // the 3D hand-off is only offered before the world has been entered
