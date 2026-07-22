@@ -346,11 +346,14 @@
     .pc-badge.pc-badge-amber { color:#ffe9c2; background:color-mix(in srgb,#e0a45a 30%, transparent); border-color:color-mix(in srgb,#e0a45a 55%, transparent); }
     /* per-card action buttons — neo-brutalist, matching the start-screen mode buttons */
     .pc-actions { flex:0 0 auto; display:flex; flex-direction:column; gap:9px; align-items:stretch; }
-    .pc-btn { font-family:var(--font-display); font-weight:800; font-size:.8rem; letter-spacing:.03em; text-transform:uppercase; text-align:center;
-      white-space:nowrap; padding:9px 16px; border-radius:9px; cursor:pointer; text-decoration:none; color:#17130e;
+    /* .panel .panel-scroll a (the generic panel link style) is more specific than a bare .pc-btn and was
+       recolouring the Try-it-Out anchor to the accent + swapping its bottom border for a thin accent line;
+       these rules keep the button text pure black and the 2.5px black border whole on all four sides */
+    .panel .panel-scroll a.pc-btn, .pc-btn { font-family:var(--font-display); font-weight:800; font-size:.8rem; letter-spacing:.03em; text-transform:uppercase; text-align:center;
+      white-space:nowrap; padding:9px 16px; border-radius:9px; cursor:pointer; text-decoration:none; color:#000;
       border:2.5px solid #17130e; box-shadow:4px 4px 0 #c4c8cf;
       transition:transform .12s ease, box-shadow .12s ease; }
-    .pc-btn:hover, .pc-btn:focus-visible { transform:translate(-2px,-2px); box-shadow:6px 6px 0 #c4c8cf; outline:none; }
+    .pc-btn:hover, .pc-btn:focus-visible, .panel .panel-scroll a.pc-btn:hover { color:#000; opacity:1; border:2.5px solid #17130e; transform:translate(-2px,-2px); box-shadow:6px 6px 0 #c4c8cf; outline:none; }
     .pc-btn:active { transform:translate(2px,2px); box-shadow:0 0 0 #c4c8cf; }
     .pc-try { background:var(--pc,#7bc96f); }
     .pc-read { background:#eceae2; }
