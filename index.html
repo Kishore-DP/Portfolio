@@ -1293,7 +1293,7 @@
   <div id="onePager" role="dialog" aria-modal="true" aria-label="Printable resume">
     <div class="qv-bar">
       <div class="qv-brand">The Spatula Works <span>— Resume</span></div>
-      <div class="qv-actions"><button id="opPrint" title="Print or save as PDF"><svg class="qv-print-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="1.5"/><path d="M8 13h8v8H8z"/></svg><span class="qv-print-label">Print</span></button><button id="opClose" aria-label="Close resume">&times;</button></div>
+      <div class="qv-actions"><button id="opShare" title="Copy a link straight to this resume"><svg class="qv-print-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg><span class="qv-print-label">Share</span></button><button id="opPrint" title="Print or save as PDF"><svg class="qv-print-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="1.5"/><path d="M8 13h8v8H8z"/></svg><span class="qv-print-label">Print</span></button><button id="opClose" aria-label="Close resume">&times;</button></div>
     </div>
     <div class="op-scroll"><div class="op-page">
       <div class="op-top">
@@ -2743,7 +2743,7 @@
     }
     function hidePanel(){ panelEl.classList.remove('show'); scrimEl.classList.remove('show'); document.body.classList.remove('panel-open');
       if(burstedOrb){ reformOrb(burstedOrb); burstedOrb=null; } }
-    function closePanel(){ activeTopic=null; hidePanel(); }                 // single close path (X, Esc, scrim, movement)
+    function closePanel(){ if(panelEl.classList.contains('show')) sfx('close'); activeTopic=null; hidePanel(); }   // single close path (X, Esc, scrim, movement)
     scrimEl.addEventListener('click', closePanel);
     const panelOpen=()=>panelEl.classList.contains('show');
     function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>toastEl.classList.remove('show'),1800); }
@@ -2766,7 +2766,7 @@
     function topicLinkFor(topic){ return `${location.origin}${location.pathname}?topic=${encodeURIComponent(topic)}`; }
     function copyTopicLink(topic, title){
       const url=topicLinkFor(topic);
-      const done=()=>toast(`Link to "${title}" copied!`);
+      const done=()=>{ toast(`Link to "${title}" copied!`); sfx('copy'); };
       if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done).catch(done);
       else done();
     }
@@ -2777,8 +2777,8 @@
       const btn=e.target.closest('.biz-share'); if(!btn) return;
       const url=topicLinkFor('contact');
       const data={ title:"Kishore DP — The Spatula Works", text:'Student developer — check out my interactive 3D portfolio.', url };
-      if(navigator.share){ try{ await navigator.share(data); }catch(err){} }   // user closing the sheet also lands here — that's fine, not an error
-      else if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(()=>toast('Card link copied — share it anywhere!')).catch(()=>toast(url)); }
+      if(navigator.share){ try{ await navigator.share(data); sfx('copy'); }catch(err){} }   // user closing the sheet also lands here — that's fine, not an error
+      else if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(()=>{ toast('Card link copied — share it anywhere!'); sfx('copy'); }).catch(()=>toast(url)); }
       else toast(url);
     });
 
@@ -2867,7 +2867,7 @@
       projModalBody.scrollTop=0;
       projScrimEl.classList.add('show'); projModalEl.classList.add('show'); sfx('whoosh');
     }
-    function closeProjectModal(){ projScrimEl.classList.remove('show'); projModalEl.classList.remove('show'); }
+    function closeProjectModal(){ if(projModalEl.classList.contains('show')) sfx('close'); projScrimEl.classList.remove('show'); projModalEl.classList.remove('show'); }
     document.addEventListener('click', e=>{ const rd=e.target.closest('.pc-read'); if(rd) openProjectModal(rd.closest('.pc')); });
     document.getElementById('projModalClose').addEventListener('click', closeProjectModal);
     projScrimEl.addEventListener('click', closeProjectModal);
@@ -2939,8 +2939,8 @@
       masterGain=actx.createGain(); masterGain.gain.value=soundOn?audio.level*VOL_SCALE:0; masterGain.connect(actx.destination);
       musicGain=actx.createGain();  musicGain.gain.value=0.85;   // fixed sub-mix balance (music sits just under the effects)
       sfxGain=actx.createGain();    sfxGain.gain.value=1.0;      // fixed sub-mix; the single master slider is the only user control
-      musicGain.connect(masterGain); sfxGain.connect(masterGain);
-      startMusic(); ensureSteps();   // preload the footstep recording so the first step isn't delayed
+      musicGain.connect(masterGain); sfxGain.connect(masterGain);   // musicGain kept as an unused bus (background music removed)
+      ensureSteps();   // preload the footstep recording so the first step isn't delayed
     }
     // apply the single volume to the one master bus (gentle ramp = no sudden spike)
     function applyAudio(ramp=0.4){ if(!actx) return; const t=actx.currentTime, g=masterGain.gain;
@@ -2955,16 +2955,7 @@
       syncSoundIcon();
     }
 
-    // ---- background music: looped ambient track, routed through musicGain so the sliders/mute still apply ----
-    let _musicBuf=null;
-    function startMusic(){ if(musicSrc) return;   // already playing
-      const begin=buf=>{ if(musicSrc) return; musicSrc=actx.createBufferSource(); musicSrc.buffer=buf; musicSrc.loop=true;
-        musicSrc.connect(musicGain); musicSrc.start(); };
-      if(_musicBuf){ begin(_musicBuf); return; }
-      fetch('audio/ambient.mp3').then(r=>r.arrayBuffer()).then(b=>actx.decodeAudioData(b))
-        .then(buf=>{ _musicBuf=buf; begin(buf); })
-        .catch(e=>console.error('music load failed', e));
-    }
+    // ---- background music removed — only sound effects and footsteps play now ----
 
     // ---- sound effects: all synthesized in-browser (no files), routed through sfxGain (respects the SFX slider) ----
     function noiseBuf(dur,shape){ const n=Math.max(1,(actx.sampleRate*dur)|0), b=actx.createBuffer(1,n,actx.sampleRate), d=b.getChannelData(0);
@@ -2995,9 +2986,29 @@
         const src=actx.createBufferSource(); src.buffer=noiseBuf(0.09,2);   // a soft noise "poof" layered underneath for texture
         const bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=0.9; bp.frequency.setValueAtTime(1900,t);
         const ng=actx.createGain(); ng.gain.setValueAtTime(0.0001,t); ng.gain.exponentialRampToValueAtTime(0.13,t+0.01); ng.gain.exponentialRampToValueAtTime(0.0001,t+0.09);
-        src.connect(bp).connect(ng).connect(sfxGain); src.start(t); src.stop(t+0.1); }
+        src.connect(bp).connect(ng).connect(sfxGain); src.start(t); src.stop(t+0.1); },
+      close(){ const t=actx.currentTime, dur=0.42, src=actx.createBufferSource(); src.buffer=noiseBuf(dur,0);   // reverse-whoosh = "closing"
+        const bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=0.8;
+        bp.frequency.setValueAtTime(1200,t); bp.frequency.exponentialRampToValueAtTime(210,t+dur);   // downward sweep
+        const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.15,t+0.05); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+        src.connect(bp).connect(g).connect(sfxGain); src.start(t); src.stop(t+dur); },
+      copy(){ const t0=actx.currentTime, notes=[880,1318.5];   // two-note rising "copied!" confirm
+        notes.forEach((f,k)=>{ const t=t0+k*0.08, o=actx.createOscillator(); o.type='sine'; o.frequency.value=f;
+          const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.2,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.22);
+          o.connect(g).connect(sfxGain); o.start(t); o.stop(t+0.24); }); },
+      hover(){ const t=actx.currentTime, o=actx.createOscillator(); o.type='sine';   // a tiny, soft UI tick
+        o.frequency.setValueAtTime(1500,t); o.frequency.exponentialRampToValueAtTime(2200,t+0.03);
+        const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.05,t+0.007); g.gain.exponentialRampToValueAtTime(0.0001,t+0.06);
+        o.connect(g).connect(sfxGain); o.start(t); o.stop(t+0.07); }
     };
     function sfx(name){ if(!actx||actx.state!=='running'||!soundOn) return; try{ (SFX[name]||(()=>{}))(); }catch(e){} }
+
+    // a soft tick when hovering the chunky action buttons (throttled so quick passes don't machine-gun)
+    let _lastHoverSfx=0;
+    document.addEventListener('pointerover', e=>{
+      if(!e.target.closest('.mode-btn, .pc-btn')) return;
+      const now=performance.now(); if(now-_lastHoverSfx>150){ _lastHoverSfx=now; sfx('hover'); }
+    });
 
     // birds chirp roughly once a minute (only once audio is active and the tab is visible)
     (function birdLoop(){ setTimeout(()=>{ if(!document.hidden) sfx('bird'); birdLoop(); }, 55000+Math.random()*10000); })();
@@ -3086,7 +3097,7 @@
     const opEl=document.getElementById('onePager');
     let opAutoOpenedForPrint=false, opFromQV=false;
     function opOpen(){ opEl.classList.add('show'); closeMenu(); if(panelOpen()) closePanel(); sfx('whoosh'); }
-    function opClose(){ opEl.classList.remove('show');
+    function opClose(){ if(opEl.classList.contains('show')) sfx('close'); opEl.classList.remove('show');
       if(opFromQV){ opFromQV=false; qvOpen(); } }              // opened from the Quick View bar: closing returns there
     function opIsOpen(){ return opEl.classList.contains('show'); }
     document.getElementById('onePagerBtn').addEventListener('click', ()=>{ qvClose(); opOpen(); });
@@ -3094,7 +3105,19 @@
       opFromQV=true; qvEl.classList.remove('show','qv-enter'); opOpen(); });
     document.getElementById('opClose').addEventListener('click', opClose);
     document.getElementById('opPrint').addEventListener('click', ()=>window.print());
+    // Share: a link that opens straight to this resume (?view=resume). Native share sheet where available
+    // (phones — lets the user send it or save it), otherwise copy the link. Print button = download as PDF.
+    const resumeLink=()=>`${location.origin}${location.pathname}?view=resume`;
+    document.getElementById('opShare').addEventListener('click', async ()=>{
+      const url=resumeLink();
+      if(navigator.share){ try{ await navigator.share({ title:'Kishore DP — Resume', text:'My one-page resume', url }); sfx('copy'); }catch(e){} }
+      else if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(()=>{ toast('Resume link copied — opens straight to the resume!'); sfx('copy'); }).catch(()=>toast(url)); }
+      else toast(url);
+    });
     addEventListener('keydown', e=>{ if(e.code==='Escape' && opIsOpen()) opClose(); });
+    // a shared ?view=resume link lands the visitor directly on the resume (it's a top overlay, so it just
+    // covers whatever's loading behind it)
+    if(new URLSearchParams(location.search).get('view')==='resume'){ opFromQV=false; opOpen(); }
 
     // any print attempt (Ctrl/Cmd+P) should produce a sensible page — default to Quick View unless the one-pager is already open
     addEventListener('beforeprint', ()=>{ if(!qvIsOpen() && !opIsOpen()){ qvAutoOpenedForPrint=true; buildQuickView(); qvEl.classList.add('show'); } });
