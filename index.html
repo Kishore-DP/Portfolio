@@ -2476,15 +2476,7 @@
       const h=cfg.world*0.8, sc=sun.shadow.camera; sc.left=-h;sc.right=h;sc.top=h;sc.bottom=-h;sc.near=1;sc.far=cfg.world*5; sc.updateProjectionMatrix();
       sun.position.set(cfg.world*0.75, cfg.world*0.98, cfg.world*0.5); sun.target.position.set(0,0,0); // high 3/4 angle: lights the scene yet still throws shadows
 
-      // ---- space grid floor: a vast dark plane with faint purple grid + X marks, fading into the void (reference look) ----
-      const gcv=document.createElement('canvas'); gcv.width=gcv.height=128; const gx=gcv.getContext('2d');
-      gx.fillStyle='#08060f'; gx.fillRect(0,0,128,128);
-      gx.strokeStyle='rgba(150,90,200,0.20)'; gx.lineWidth=2; gx.strokeRect(0,0,128,128);
-      gx.strokeStyle='rgba(210,110,180,0.32)'; gx.lineWidth=3; const dd=9;
-      gx.beginPath(); gx.moveTo(64-dd,64-dd); gx.lineTo(64+dd,64+dd); gx.moveTo(64+dd,64-dd); gx.lineTo(64-dd,64+dd); gx.stroke();
-      const gtex=new THREE.CanvasTexture(gcv); gtex.wrapS=gtex.wrapT=THREE.RepeatWrapping; gtex.repeat.set(90,90); gtex.anisotropy=maxAniso;
-      const grid=new THREE.Mesh(new THREE.PlaneGeometry(cfg.world*12, cfg.world*12), new THREE.MeshBasicMaterial({map:gtex}));
-      grid.rotation.x=-Math.PI/2; grid.position.y=-0.6; grid.frustumCulled=false; scene.add(grid);
+      // ---- space grid floor removed (base tile) ----
     }
 
     function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
