@@ -1772,7 +1772,7 @@
     const gpuName=(()=>{ try{ const c=document.createElement('canvas'), gl=c.getContext('webgl2')||c.getContext('webgl');
       const ext=gl&&gl.getExtension('WEBGL_debug_renderer_info'); return ext?String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)):''; }catch(e){ return ''; } })();
     const weakGPU=/SwiftShader|llvmpipe|Basic Render|Intel.*\b(HD|UHD)\s+Graphics/i.test(gpuName);   // matches "Intel(R) HD Graphics 520" etc.
-    const renderer=new THREE.WebGLRenderer({antialias:!isMobile});   // MSAA measured ~free on the light tier's direct-render path — keep edges clean everywhere
+    const renderer=new THREE.WebGLRenderer({antialias:!isMobile, logarithmicDepthBuffer:true});   // MSAA measured ~free on the light tier's direct-render path — keep edges clean everywhere. log depth buffer kills z-fighting on the flat ground rocks (near/far ratio was starving precision)
     renderer.setPixelRatio(Math.min(devicePixelRatio,isMobile?1.5:2)); renderer.setSize(innerWidth,innerHeight);
     renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.38;
     renderer.shadowMap.enabled=true;
@@ -1783,7 +1783,7 @@
     const scene=new THREE.Scene();
     scene.background=new THREE.Color(0x07060f);          // deep space backdrop (Bruno-Simon style)
     scene.fog=new THREE.FogExp2(0x07060f, 0.0013);        // haze fades the grid floor into the dark at the edges
-    const camera=new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.05, 4000);
+    const camera=new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 3000);
     camera.position.set(0,40,60);
 
     // ---- cinematic lighting: warm golden key + cool sky fill + cool back-rim, soft shadows ----
