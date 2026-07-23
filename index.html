@@ -954,7 +954,7 @@
 
     /* zoomed-out intro: MODE SELECT overlay — pick 2D (Quick View) or 3D (the world) */
     #start { position:fixed; inset:0; z-index:40; display:none; flex-direction:column; align-items:center; justify-content:center; gap:6px; pointer-events:none;
-      padding-top:20vh;   /* nudge the text + buttons group a few cm below centre */
+      padding-top:27vh;   /* nudge the text + buttons group a few cm below centre */
       transition:opacity .6s var(--ease-smooth), filter .6s var(--ease-smooth), transform .6s var(--ease-smooth); }
     #start.show { display:flex; }
     #start.show .mode-row { pointer-events:auto; }   /* only the cards catch clicks — sound/menu buttons stay reachable */
@@ -3323,8 +3323,8 @@
       camTarget.copy(camPivot).add(dir.clone().multiplyScalar(dist));
 
       // zoomed-out establishing shot of the whole island, framed at an angle (like the reference)
-      _estPos.set(Math.sin(establishAngle)*bound*2.7, bound*2.1, Math.cos(establishAngle)*bound*2.7);
-      _estLook.set(0, topY*0.25, 0);
+      _estPos.set(Math.sin(establishAngle)*bound*2.85, bound*2.1, Math.cos(establishAngle)*bound*2.85);
+      _estLook.set(0, topY*0.85, 0);
       if(started){
         camera.position.lerp(camTarget, reducedMotion?1:.35); camera.lookAt(camPivot);
       } else if(povPhase){
