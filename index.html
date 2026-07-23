@@ -1789,8 +1789,8 @@
     const ambient=new THREE.AmbientLight(0x4a5570, 0.55); scene.add(ambient);            // soft cool ambient so shadows read but never go black
     const hemi=new THREE.HemisphereLight(0xdce8ff, 0x7a6038, 0.9); scene.add(hemi);      // cool sky light + warm ground bounce
     const sun=new THREE.DirectionalLight(0xffdca6, 3.6); sun.castShadow=true;           // warm golden-hour key (the shadow caster)
-    const shadowRes=isMobile?1024:2048; sun.shadow.mapSize.set(shadowRes,shadowRes);   // quarter the shadow-map memory/cost on phones
-    sun.shadow.bias=-0.0004; sun.shadow.normalBias=0.6; sun.shadow.radius=4;
+    const shadowRes=isMobile?1024:3072; sun.shadow.mapSize.set(shadowRes,shadowRes);   // quarter the shadow-map memory/cost on phones; desktop bumped 2048->3072 for crisper shadow edges
+    sun.shadow.bias=-0.0003; sun.shadow.normalBias=0.55; sun.shadow.radius=3;
     scene.add(sun); scene.add(sun.target);
     const rim=new THREE.DirectionalLight(0x7793c8, 0.7); rim.position.set(-90,70,-80); scene.add(rim); // cool back-light to lift models off the dark void
 
@@ -2433,7 +2433,7 @@
       fbx.traverse(c=>{ if(c.isMesh&&c.geometry&&!c.geometry.boundsTree){ try{ c.geometry.computeBoundsTree(); }catch(e){ console.warn('bvh skip', c.name, e); } }});
 
       // shadow sized to world
-      const h=cfg.world*0.8, sc=sun.shadow.camera; sc.left=-h;sc.right=h;sc.top=h;sc.bottom=-h;sc.near=1;sc.far=cfg.world*5; sc.updateProjectionMatrix();
+      const h=cfg.world*0.68, sc=sun.shadow.camera; sc.left=-h;sc.right=h;sc.top=h;sc.bottom=-h;sc.near=1;sc.far=cfg.world*5; sc.updateProjectionMatrix();   // tighter frustum around the island = more shadow texels per unit = sharper shadows
       sun.position.set(cfg.world*0.75, cfg.world*0.98, cfg.world*0.5); sun.target.position.set(0,0,0); // high 3/4 angle: lights the scene yet still throws shadows
 
       // ---- space grid floor removed (base tile) ----
