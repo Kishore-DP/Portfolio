@@ -3230,6 +3230,7 @@
 
     // ---------- loop ----------
     const clock=new THREE.Clock(); const camTarget=new THREE.Vector3(), camPivot=new THREE.Vector3();
+    let camDistSmooth=cfg.camDist;   // smoothed camera-collision distance so brushing geometry eases the camera in/out instead of snapping (kills walk-time jitter)
     const _q=new THREE.Quaternion(), _ax=new THREE.Vector3(1,0,0); const _proj=new THREE.Vector3();
     const _estPos=new THREE.Vector3(), _estLook=new THREE.Vector3(), _lookTmp=new THREE.Vector3();
     const _topPos=new THREE.Vector3(), _ctr=new THREE.Vector3(0,0,0);   // straight-down intro view of the island
@@ -3265,7 +3266,7 @@
       }
       // footstep loop — the recording plays while moving and fades out when stopped
       { const want=started&&moving; if(want!==_stepsOn){ _stepsOn=want; setFootsteps(want); } }
-      player.position.y += (groundY-player.position.y)*Math.min(1,dt*12);
+      player.position.y += (groundY-player.position.y)*(reducedMotion?1:1-Math.exp(-9*dt));   // frame-rate-independent ground follow — smooths the micro-steps of the faceted terrain
 
       // walk anim
       if(walkAction&&idleAction){ const t=moving?1:0; walkAction.weight+=(t-walkAction.weight)*Math.min(1,dt*10); idleAction.weight=1-walkAction.weight; }
@@ -3318,15 +3319,18 @@
       const dir=new THREE.Vector3(Math.sin(camYaw)*Math.cos(camPitch), Math.sin(camPitch), Math.cos(camYaw)*Math.cos(camPitch));
       camPivot.copy(player.position); camPivot.y+=cfg.charH*0.6;
       // camera collision: pull in if something is between the character and the camera
-      let dist=camDist; camRay.set(camPivot, dir); camRay.far=camDist;
-      const ch=camRay.intersectObject(world,true); if(ch.length) dist=Math.max(3, ch[0].distance-0.6);
+      let rawDist=camDist; camRay.set(camPivot, dir); camRay.far=camDist;
+      const ch=camRay.intersectObject(world,true); if(ch.length) rawDist=Math.max(3, ch[0].distance-0.6);
+      // snap in quickly when something blocks the view, ease back out slowly — no per-frame distance flicker
+      camDistSmooth += (rawDist-camDistSmooth) * (rawDist<camDistSmooth ? 1 : (reducedMotion?1:1-Math.exp(-6*dt)));
+      const dist=camDistSmooth;
       camTarget.copy(camPivot).add(dir.clone().multiplyScalar(dist));
 
       // zoomed-out establishing shot of the whole island, framed at an angle (like the reference)
       _estPos.set(Math.sin(establishAngle)*bound*3.25, bound*2.1, Math.cos(establishAngle)*bound*3.25);
       _estLook.set(0, topY*0.5, 0);
       if(started){
-        camera.position.lerp(camTarget, reducedMotion?1:.35); camera.lookAt(camPivot);
+        camera.position.lerp(camTarget, reducedMotion?1:1-Math.exp(-14*dt)); camera.lookAt(camPivot);
       } else if(povPhase){
         // 2D -> 3D cinematic: the veil clears on the robot's first-person view; hold a beat, then an
         // eased pull-back glides out through to the standard third-person orbit and gameplay begins
